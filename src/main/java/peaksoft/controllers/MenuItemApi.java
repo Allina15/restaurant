@@ -44,4 +44,10 @@ public class MenuItemApi {
     public List<MenuItem>isVegan(@RequestParam boolean vegan){
         return menuItemService.filterByIsVegetarian(vegan);
     }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @DeleteMapping
+    public SimpleResponse delete(String name){
+        return menuItemService.delete(name);
+    }
 }

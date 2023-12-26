@@ -25,7 +25,19 @@ public class ChequeApi {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('ADMIN','WAITER')")
-    public double countCheque(@RequestParam String userName){
+    public String countCheque(@RequestParam String userName){
         return chequeService.countCheque(userName);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @DeleteMapping("/{id}")
+    public SimpleResponse delete(@PathVariable long id){
+        return chequeService.delete(id);
+    }
+
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @GetMapping("/restaurantCheques")
+    public String restaurantCheques(@RequestParam String name){
+        return chequeService.restaurantCheque(name);
     }
 }

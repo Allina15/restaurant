@@ -47,4 +47,8 @@ public class UserRequest {
         this.role = role;
         this.experience = experience;
     }
+
+    public UserRequest(String email) {
+        this.email = email;
+    }
 }

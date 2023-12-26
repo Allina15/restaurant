@@ -17,6 +17,9 @@ import peaksoft.repositories.RestaurantRepository;
 import peaksoft.repositories.UserRepository;
 import peaksoft.service.UserService;
 
+import java.util.Collections;
+import java.util.List;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,8 +32,13 @@ public class UserServiceImpl implements UserService {
      public SimpleResponse delete(UserRequest userRequest) {
           User user = userRepository.findUserByEmail(userRequest.getEmail()).orElseThrow(() -> new NotFoundException("User with email: " + userRequest.getEmail() + "not found"));
           Restaurant restaurant = restaurantRepository.findRestaurantByUsers(user);
-          restaurant.getUsers().remove(user);
-          userRepository.delete(user);
+          if (user.getRestaurant()!=null) {
+               restaurant.getUsers().remove(user);
+               userRepository.delete(user);
+          }
+          else {
+               userRepository.delete(user);
+          }
           return new SimpleResponse(HttpStatus.OK, "Deleted successfully");
      }
 
@@ -77,6 +85,10 @@ public class UserServiceImpl implements UserService {
           }else{
                if (user != null && assignRequest.getAcceptOrReject().equalsIgnoreCase("accept")){
                     user.setRestaurant(restaurant);
+                    restaurant.setUsers(Collections.singletonList(user));
+                    int i = restaurant.getNumberOfEmployees();
+                    i++;
+                    restaurant.setNumberOfEmployees(i);
                     userRepository.save(user);
                     return new SimpleResponse(HttpStatus.OK, "successfully assigned");
                } else if (user != null && assignRequest.getAcceptOrReject().equalsIgnoreCase("reject")) {

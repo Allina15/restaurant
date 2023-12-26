@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.MenuRequest;
 import peaksoft.dto.SimpleResponse;
+import peaksoft.exceptions.BadCredentialsException;
 import peaksoft.exceptions.NotFoundException;
 import peaksoft.models.Category;
 import peaksoft.models.MenuItem;
@@ -32,15 +33,10 @@ public class MenuItemServImpl implements MenuItemService {
         menuItem.setName(menuRequest.getName());
         menuItem.setImage(menuRequest.getImage());
         menuItem.setImage(menuRequest.getImage());
-        try {
-            double price = menuRequest.getPrice();
-            if (price < 0) {
-                throw new IllegalArgumentException("Price must be non-negative");
+            if (menuRequest.getPrice() < 0) {
+                throw new BadCredentialsException("Price must be non-negative");
             }
-            menuItem.setPrice(price);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Ошибка: " + e.getMessage());
-        }
+            menuItem.setPrice(menuRequest.getPrice());
         menuItem.setDescription(menuRequest.getDescription());
         menuItem.setVegetarian(menuRequest.isVegetarian());
         menuItem.setCategory(category);
@@ -53,8 +49,9 @@ public class MenuItemServImpl implements MenuItemService {
     @Override
     public SimpleResponse delete(String name) {
     MenuItem menuItem = menuItemRepository.findMenuItemByName(name);
-
-        return null;
+    menuItem.setRestaurant(null);
+    menuItemRepository.delete(menuItem);
+        return new SimpleResponse(HttpStatus.OK, "menu deleted");
     }
 
     @Override

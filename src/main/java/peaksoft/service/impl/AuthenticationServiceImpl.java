@@ -2,6 +2,7 @@ package peaksoft.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import peaksoft.config.JwtService;
@@ -45,20 +46,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .experience(request.getExperience())
                 .build();
 
+        if (!request.getPhoneNumber().startsWith("+996") && request.getPhoneNumber().length()!= 13){
+            throw new BadCredentialsException("incorrect phone number format");
+        }
+
         int age = Period.between(request.getDateOfBirth(), LocalDate.now()).getYears();
         if (request.getRole()==Role.CHEF){
             if (age < 25 || age > 45){
-                throw new RuntimeException("Ваш возраст не подходит!");
+                throw new BadCredentialsException("Ваш возраст не подходит!");
             }
             if (request.getExperience() < 2){
-                throw new RuntimeException("У вас недостаточно опыта!");
+                throw new BadCredentialsException("У вас недостаточно опыта!");
             }
         } else if (request.getRole()==Role.WAITER) {
             if (age < 18 || age > 30){
-                throw new RuntimeException("Ваш возраст не подходит!");
+                throw new BadCredentialsException("Ваш возраст не подходит!");
             }
             if (request.getExperience() < 1){
-                throw new RuntimeException("У вас недостаточно опыта!");
+                throw new BadCredentialsException("У вас недостаточно опыта!");
             }
         }
         userRepository.save(user);

@@ -26,4 +26,5 @@ public interface MenuItemRepository extends JpaRepository<MenuItem,Long> {
     @Query("SELECT m FROM MenuItem m WHERE m.isVegetarian = :vegan")
     List<MenuItem> findVeganItems(@Param("vegan") boolean vegan);
 
+    List<MenuItem>findMenuItemByCategoryName(String category);
 }

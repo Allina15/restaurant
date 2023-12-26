@@ -38,7 +38,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public RestaurantResponse getProfile(String name) {
         Restaurant restaurant = restaurantRepository.findByName(name);
-            return new RestaurantResponse(restaurant.getName(), restaurant.getLocation(), restaurant.getRestType(), restaurant.hasVacancy(), restaurant.getService());
+            return new RestaurantResponse(restaurant.getName(), restaurant.getLocation(), restaurant.getRestType(), restaurant.getNumberOfEmployees(), restaurant.getService());
     }
 
     @Override
@@ -49,6 +49,6 @@ public class RestaurantServiceImpl implements RestaurantService {
         restaurant.setRestType(restaurantRequest.getRestType());
         restaurant.setService(restaurantRequest.getService());
         restaurantRepository.save(restaurant);
-        return new RestaurantResponse(restaurant.getName(), restaurant.getLocation(), restaurant.getRestType(), restaurant.hasVacancy(), restaurant.getService());
+        return new RestaurantResponse(restaurant.getName(), restaurant.getLocation(), restaurant.getRestType(), restaurant.getNumberOfEmployees(), restaurant.getService());
     }
 }

@@ -10,7 +10,7 @@ import peaksoft.validations.PriceValidator;
 public class MenuRequest {
     private String name;
     private String image;
-    @PriceValidator()
+    @PriceValidator
     private double price;
     private String description;
     private boolean isVegetarian;

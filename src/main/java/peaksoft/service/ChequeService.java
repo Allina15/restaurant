@@ -9,7 +9,9 @@ public interface ChequeService {
 
     ChequeResponse save(ChequeRequest chequeRequest);
 
-    double countCheque(String userName);
+    String countCheque(String userName);
 
-    SimpleResponse delete();
+    SimpleResponse delete(long id);
+
+    String restaurantCheque(String name);
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import peaksoft.dto.SimpleResponse;
 import peaksoft.dto.StopListRequest;
 import peaksoft.exceptions.AlreadyExistsException;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.models.MenuItem;
 import peaksoft.models.StopList;
 import peaksoft.repositories.MenuItemRepository;
@@ -46,7 +47,9 @@ public class StopListServImpl implements StopListService {
 
     @Override
     public SimpleResponse delete(long id) {
-        stopListRepository.deleteById(id);
+       StopList stopList = stopListRepository.findById(id).orElseThrow(()->new NotFoundException("stoplist not found"));
+       stopList.getMenuItem().setStopList(null);
+       stopListRepository.delete(stopList);
         return new SimpleResponse(HttpStatus.OK, "deleted");
     }
 }

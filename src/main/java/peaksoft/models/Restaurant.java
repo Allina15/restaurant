@@ -7,7 +7,6 @@ import lombok.*;
 import java.util.List;
 
 @Entity
-@Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,19 +23,38 @@ public class Restaurant {
     private String restType;
     private int numberOfEmployees;
     private String service;
-    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REFRESH)
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<User> users;
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<MenuItem> menuItems;
 
-    public String hasVacancy() {
-        if (users.size() < 15) {
-            numberOfEmployees = users.size();
-            return String.valueOf(numberOfEmployees);
-        } else {
-            return "Нет вакансий в ресторане";
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public void setRestType(String restType) {
+        this.restType = restType;
+    }
+
+    public void setNumberOfEmployees(int numberOfEmployees) {
+        this.numberOfEmployees = users.size();
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    public void setMenuItems(List<MenuItem> menuItems) {
+        this.menuItems = menuItems;
     }
 }
