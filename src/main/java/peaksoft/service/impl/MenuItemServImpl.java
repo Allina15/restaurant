@@ -36,7 +36,7 @@ public class MenuItemServImpl implements MenuItemService {
             if (menuRequest.getPrice() < 0) {
                 throw new BadCredentialsException("Price must be non-negative");
             }
-            menuItem.setPrice(menuRequest.getPrice());
+        menuItem.setPrice(menuRequest.getPrice());
         menuItem.setDescription(menuRequest.getDescription());
         menuItem.setVegetarian(menuRequest.isVegetarian());
         menuItem.setCategory(category);

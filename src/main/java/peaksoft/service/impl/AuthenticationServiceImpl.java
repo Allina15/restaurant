@@ -46,7 +46,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .experience(request.getExperience())
                 .build();
 
-        if (!request.getPhoneNumber().startsWith("+996") && request.getPhoneNumber().length()!= 13){
+        if (!request.getPhoneNumber().startsWith("+996") || request.getPhoneNumber().length()!= 13){
             throw new BadCredentialsException("incorrect phone number format");
         }
 

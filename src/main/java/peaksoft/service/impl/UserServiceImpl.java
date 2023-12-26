@@ -10,6 +10,7 @@ import peaksoft.dto.AssignRequest;
 import peaksoft.dto.SimpleResponse;
 import peaksoft.dto.UserRequest;
 import peaksoft.dto.UserResponse;
+import peaksoft.exceptions.AlreadyExistsException;
 import peaksoft.exceptions.NotFoundException;
 import peaksoft.models.Restaurant;
 import peaksoft.models.User;
@@ -81,7 +82,7 @@ public class UserServiceImpl implements UserService {
           Restaurant restaurant = restaurantRepository.findById(assignRequest.getRestaurantId()).orElseThrow(()->new NotFoundException("Restaurant with id "+assignRequest.getRestaurantId()+" not found"));
           User user = userRepository.findById(assignRequest.getWorkersId()).orElseThrow(()->new NotFoundException("user with id "+assignRequest.getWorkersId()+" not found"));
           if (restaurant.getNumberOfEmployees() >= 15){
-               throw new RuntimeException("no vacancy");
+               throw new AlreadyExistsException("no vacancy");
           }else{
                if (user != null && assignRequest.getAcceptOrReject().equalsIgnoreCase("accept")){
                     user.setRestaurant(restaurant);

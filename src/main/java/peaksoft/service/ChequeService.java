@@ -11,7 +11,5 @@ public interface ChequeService {
 
     String countCheque(String userName);
 
-    SimpleResponse delete(long id);
-
     String restaurantCheque(String name);
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import peaksoft.dto.ChequeRequest;
 import peaksoft.dto.ChequeResponse;
 import peaksoft.dto.SimpleResponse;
+import peaksoft.exceptions.BadCredentialsException;
 import peaksoft.exceptions.NotFoundException;
 import peaksoft.models.Cheque;
 import peaksoft.models.MenuItem;
@@ -41,19 +42,23 @@ public class ChequeServImpl implements ChequeService {
         User user = userRepository.findUserByFirstNameAndLastName(chequeRequest.firstName(), chequeRequest.lastName()).orElseThrow(() -> new NotFoundException("User not found"));
         List<MenuItem> menuItems = menuItemRepository.searchMenu(chequeRequest.menuName());
         double average = 0;
-        for (MenuItem me : menuItems) {
-            average += me.getPrice();
-        }
         double service = average / 10;
         double grandTotal = average + service;
         Cheque cheque = new Cheque();
-        cheque.setUser(user);
-        cheque.setCreatedAt(ZonedDateTime.now());
-        cheque.setPriceAverage(average);
-        cheque.setMenuItems(menuItems);
-        chequeRepository.save(cheque);
-        return new ChequeResponse(user.getFirstName(), user.getLastName(), menuItems, average, service, grandTotal);
-    }
+        for (MenuItem menu : menuItems) {
+            if (menu.getStopList() != null) {
+                throw new BadCredentialsException("This menu item is in stopList");
+            } else {
+                average += menu.getPrice();
+                cheque.setUser(user);
+                cheque.setCreatedAt(ZonedDateTime.now());
+                cheque.setPriceAverage(average);
+                cheque.setMenuItems(menuItems);
+                chequeRepository.save(cheque);
+            }
+        }
+                return new ChequeResponse(user.getFirstName(), user.getLastName(), menuItems, average, service, grandTotal);
+        }
 
     @Override
     public String countCheque(String userName) {
@@ -72,15 +77,10 @@ public class ChequeServImpl implements ChequeService {
         return "Количество: " + count + "\n" + " Сумма: " + sum;
     }
 
-    @Override
-    public SimpleResponse delete(long id) {
-        chequeRepository.deleteById(id);
-        return new SimpleResponse(HttpStatus.OK, "deleted");
-    }
 
     @Override
     public String restaurantCheque(String name) {
-        Restaurant restaurant = restaurantRepository.findByName(name);
+        Restaurant restaurant = restaurantRepository.findByName(name).orElseThrow(()->new NotFoundException("Restaurant not found"));
         LocalDate today = LocalDate.now();
         if (restaurant == null) {
             throw new NotFoundException("Ресторан не найден");

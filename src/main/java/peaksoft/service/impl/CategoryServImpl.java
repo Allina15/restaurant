@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import peaksoft.dto.CategoryRequest;
 import peaksoft.dto.SimpleResponse;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.models.Category;
 import peaksoft.models.MenuItem;
 import peaksoft.repositories.CategoryRepository;
@@ -44,8 +45,12 @@ public class CategoryServImpl implements CategoryService {
     @Override
     public SimpleResponse update(CategoryRequest categoryRequest) {
         Category category = categoryRepository.findByName(categoryRequest.getName());
-        category.setName(categoryRequest.getNewName());
-        categoryRepository.save(category);
+        if (category==null){
+            throw new NotFoundException("Category not found");
+        }else {
+            category.setName(categoryRequest.getNewName());
+            categoryRepository.save(category);
+        }
         return new SimpleResponse(HttpStatus.OK, "category updated");
     }
 }

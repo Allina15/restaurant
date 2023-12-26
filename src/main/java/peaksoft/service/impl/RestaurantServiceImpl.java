@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import peaksoft.dto.RestaurantRequest;
 import peaksoft.dto.RestaurantResponse;
 import peaksoft.dto.SimpleResponse;
+import peaksoft.exceptions.NotFoundException;
 import peaksoft.models.Restaurant;
 import peaksoft.repositories.RestaurantRepository;
 import peaksoft.service.RestaurantService;
@@ -37,13 +38,13 @@ public class RestaurantServiceImpl implements RestaurantService {
 
     @Override
     public RestaurantResponse getProfile(String name) {
-        Restaurant restaurant = restaurantRepository.findByName(name);
+        Restaurant restaurant = restaurantRepository.findByName(name).orElseThrow(()->new NotFoundException("Restaurant not found"));
             return new RestaurantResponse(restaurant.getName(), restaurant.getLocation(), restaurant.getRestType(), restaurant.getNumberOfEmployees(), restaurant.getService());
     }
 
     @Override
     public RestaurantResponse update(RestaurantRequest restaurantRequest) {
-        Restaurant restaurant = restaurantRepository.findByName(restaurantRequest.getName());
+        Restaurant restaurant = restaurantRepository.findByName(restaurantRequest.getName()).orElseThrow(()->new NotFoundException("Restaurant not found"));
         restaurant.setName(restaurantRequest.getName());
         restaurant.setLocation(restaurantRequest.getLocation());
         restaurant.setRestType(restaurantRequest.getRestType());
